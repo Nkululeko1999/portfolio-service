@@ -1,7 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import router from "./routes";
+import router from "./routes.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
 app.post("/api/auto-responder", router);
 

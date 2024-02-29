@@ -1,6 +1,10 @@
 import express from "express";
 import validator from "validator";
-import { sendConfirmEmail, sendAdminEmail } from "./email.templates.js";
+import transporter from "./config.js";
+import {
+  messageSentTemplate,
+  messageConfirmTemplate,
+} from "./email.templates.js";
 
 const router = express.Router();
 
@@ -18,11 +22,22 @@ router.post("/send-email", async (req, res) => {
     const user = process.env.NODEMAILER_USER;
     const templateClient = messageConfirmTemplate(name);
     const templateAdmin = messageSentTemplate(name, email, message, phone);
-    const subjectAdmin = "Message From Client";
-    const subjectClient = "Message Confirmation";
 
-    await sendConfirmEmail(user, email, subjectClient, templateClient);
-    await sendAdminEmail(user, email, subjectAdmin, templateAdmin);
+    //Send Confirmation to Client
+    await transporter.sendMail({
+      from: user,
+      to: email,
+      subject: "Message Confirmation",
+      html: templateClient,
+    });
+
+    //Send confirmation to Admin
+    await transporter.sendMail({
+      from: email,
+      to: user,
+      subject: "Message From Client",
+      html: templateClient,
+    });
 
     return res.status(200).json({
       sucess: true,
