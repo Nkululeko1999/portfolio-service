@@ -1,15 +1,40 @@
 import express from "express";
 import validator from "validator";
-import nodemailer from "nodemailer";
+import { sendConfirmEmail, sendAdminEmail } from "./email.templates.js";
 
 const router = express.Router();
 
-router.post('/send-email', (req, res) => {
-    const { firstName, lastName, email, subject, message } = req.body;
-
-    try {
-        
-    } catch (err) {
-        console.error("Failed to send Email", err);
+router.post("/send-email", async (req, res) => {
+  const { name, email, phone, message } = req.body;
+  try {
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({
+        sucess: false,
+        status: 422,
+        message: "Email format is not correct.",
+      });
     }
+
+    const user = process.env.NODEMAILER_USER;
+    const templateClient = messageConfirmTemplate(name);
+    const templateAdmin = messageSentTemplate(name, email, message, phone);
+    const subjectAdmin = "Message From Client";
+    const subjectClient = "Message Confirmation";
+
+    await sendConfirmEmail(user, email, subjectClient, templateClient);
+    await sendAdminEmail(user, email, subjectAdmin, templateAdmin);
+
+    return res.status(200).json({
+      sucess: true,
+      status: 200,
+      message: "Email Sent. We will respond shortly.",
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, status: 500, message: "Internal Server Error" });
+  }
 });
+
+export default router;
