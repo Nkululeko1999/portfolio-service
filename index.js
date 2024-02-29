@@ -17,7 +17,7 @@ app.use(cors({
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 
 app.post("/api/auto-responder", router);
 
