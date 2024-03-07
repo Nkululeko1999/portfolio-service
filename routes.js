@@ -36,7 +36,7 @@ router.post("/send-email", async (req, res) => {
       from: email,
       to: user,
       subject: "Message From Client",
-      html: templateClient,
+      html: templateAdmin,
     });
 
     return res.status(200).json({

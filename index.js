@@ -11,7 +11,7 @@ const app = express();
 app.use(cors({
   origin: "https://nkuliappdev.onrender.com",
   methods: 'POST', 
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type'],
 }));
 
 app.use(express.json());
